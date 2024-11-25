@@ -1,1 +1,8 @@
 #! /usr/bin/bash
+
+
+echo "db create"
+
+NO_DB_URL=$(sed 's/\/cruddur//g' <<< "$CONNECTION_URL")
+
+psql $NO_DB_URL -c "CREATE DATABASE cruddur;"
