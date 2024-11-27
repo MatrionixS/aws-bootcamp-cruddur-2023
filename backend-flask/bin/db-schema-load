@@ -5,7 +5,12 @@ CYAN='\033[1;36m'
 NO_COLOR='\033[0m'
 LABEL='db schema load'
 printf "${CYAN}==${LABEL}==${NOCOLOR}\n"
-
+if [ "$1" = "prod" ]; then
+  echo "Running in production mode"
+  URL=$PROD_URL
+else
+  URL=$CONNECTION_URL
+fi
 SCHEMA_PATH=$(realpath .)/db/schema.sql
 
-psql $CONNECTION_URL cruddur < $SCHEMA_PATH
+psql $URL cruddur < $SCHEMA_PATH

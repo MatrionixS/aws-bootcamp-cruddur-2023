@@ -7,5 +7,10 @@ LABEL='db seed load'
 printf "${CYAN}==${LABEL}==${NOCOLOR}\n"
 
 SCHEMA_PATH=$(realpath .)/db/seed.sql
-
-psql $CONNECTION_URL cruddur < $SCHEMA_PATH
+if [ "$1" = "prod" ]; then
+  echo "Running in production mode"
+  URL=$PROD_URL
+else
+  URL=$CONNECTION_URL
+fi
+psql $URL cruddur < $SCHEMA_PATH

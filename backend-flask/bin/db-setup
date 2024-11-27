@@ -9,8 +9,15 @@ LABEL='db setup'
 printf "${CYAN}==${LABEL}==${NOCOLOR}\n"
 
 BIN_PATH=$(realpath .)/bin
-
-source "$BIN_PATH/db-drop"
-source "$BIN_PATH/db-create"
-source "$BIN_PATH/db-schema-load"
-source "$BIN_PATH/db-seed-load"
+SCHEMA_PATH=$(realpath .)/db/seed.sql
+if [ "$1" = "prod" ]; then
+  echo "Running in production mode"
+  PARAM=prod
+else
+  PARAM=""
+fi
+printf $PARAM
+./db-drop "$PARAM"
+source "$BIN_PATH/db-create $PARAM"
+source "$BIN_PATH/db-schema-load $PARAM"
+source "$BIN_PATH/db-seed-load $PARAM"
