@@ -1,0 +1,12 @@
+#! /usr/bin/bash
+
+CYAN='\033[1;36m'
+NO_COLOR='\033[0m'
+LABEL="set configuration"
+printf "${CYAN}==== ${LABEL}${NO_COLOR}\n"
+
+echo $1 $2
+
+
+export DB_SG_RULE_ID="$1"
+export DB_SG_ID="$2"

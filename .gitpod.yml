@@ -19,3 +19,7 @@ tasks:
       sudo apt update
       sudo apt install -y postgresql-client-13 libpq-dev
       export CONNECTION_URL="postgresql://postgres:password@localhost:5432/cruddur"
+    command: |
+      export GITPOD_IP=$(curl ifconfig.me)
+      source "$THEIA_WORKSPACE_ROOT/backend-flask/bin/set-conf one two"
+      source  "$THEIA_WORKSPACE_ROOT/backend-flask/bin/rds-update-sg-rule"
