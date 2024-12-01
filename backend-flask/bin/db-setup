@@ -17,7 +17,7 @@ else
   PARAM=""
 fi
 printf $PARAM
-./db-drop "$PARAM"
-source "$BIN_PATH/db-create $PARAM"
-source "$BIN_PATH/db-schema-load $PARAM"
-source "$BIN_PATH/db-seed-load $PARAM"
+source "$BIN_PATH/db-drop" $PARAM
+source "$BIN_PATH/db-create" $PARAM
+source "$BIN_PATH/db-schema-load" $PARAM
+source "$BIN_PATH/db-seed-load" $PARAM

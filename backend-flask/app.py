@@ -86,6 +86,7 @@ def data_search():
 @app.route("/api/activities", methods=['POST','OPTIONS'])
 @cross_origin()
 def data_activities():
+  print('TEset')
   user_handle  = 'andrewbrown'
   message = request.json['message']
   ttl = request.json['ttl']

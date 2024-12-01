@@ -23,3 +23,7 @@ tasks:
       export GITPOD_IP=$(curl ifconfig.me)
       source "$THEIA_WORKSPACE_ROOT/backend-flask/bin/set-conf one two"
       source  "$THEIA_WORKSPACE_ROOT/backend-flask/bin/rds-update-sg-rule"
+  - name: npm
+    init: |
+      cd ./frontend-react-js
+      npm install

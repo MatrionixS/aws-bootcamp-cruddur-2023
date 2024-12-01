@@ -38,12 +38,10 @@ export default function HomeFeedPage() {
   const checkAuth = async () => {
     console.log('checkAuth')
     // [TODO] Authenication
-    if (Cookies.get('user.logged_in')) {
       setUser({
-        display_name: Cookies.get('user.name'),
-        handle: Cookies.get('user.username')
+        display_name: 'Serhii Rusyn',
+        handle: 'serhii_rusyn'
       })
-    }
   };
 
   React.useEffect(()=>{

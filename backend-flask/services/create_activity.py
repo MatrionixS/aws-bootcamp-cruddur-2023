@@ -1,12 +1,13 @@
 import uuid
 from datetime import datetime, timedelta, timezone
+from lib.db import pool
 class CreateActivity:
   def run(message, user_handle, ttl):
+    print('Test')
     model = {
       'errors': None,
       'data': None
     }
-
     now = datetime.now(timezone.utc).astimezone()
 
     if (ttl == '30-days'):
@@ -24,6 +25,7 @@ class CreateActivity:
     elif (ttl == '1-hour'):
       ttl_offset = timedelta(hours=1) 
     else:
+      self.create_activities()
       model['errors'] = ['ttl_blank']
 
     if user_handle == None or len(user_handle) < 1:
@@ -49,3 +51,37 @@ class CreateActivity:
         'expires_at': (now + ttl_offset).isoformat()
       }
     return model
+
+def create_activities():
+    user_uuid = get_user_uuid()
+    print(user_uuid)
+    sql = f"""
+    INSER INTO activities(
+
+    )
+    VALUES(
+    '{user_uuid}',
+    '{message}',
+    {expires_at}
+    );
+    """
+    try:
+      conn = pool.connection()
+      cur = conn.cursor()
+      cur.execute(sql)
+      conn.commit()
+    finally:
+      conn.close()
+def get_user_uuid():
+  query = """
+  SELECT
+      users.uuid,
+    FROM public.users
+    """
+  sql = query_wrap_array(query)
+  with pool.connection() as conn:
+    with conn.cursor() as cur:
+      cur.execute(sql)
+      json = cur.fetchone()
+      print(json)
+      return json[0]
