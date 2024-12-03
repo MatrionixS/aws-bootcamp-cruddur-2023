@@ -1,84 +1,58 @@
 import uuid
 from datetime import datetime, timedelta, timezone
-from lib.db import pool
+from lib.db import pool, query_wrap_object, query_wrap_array
+
 class CreateActivity:
-  def run(message, user_handle, ttl):
-    print('Test')
+  def run(message, user_handle, ttl, logger):
     model = {
       'errors': None,
       'data': None
     }
     now = datetime.now(timezone.utc).astimezone()
-
-    if (ttl == '30-days'):
-      ttl_offset = timedelta(days=30) 
-    elif (ttl == '7-days'):
-      ttl_offset = timedelta(days=7) 
-    elif (ttl == '3-days'):
-      ttl_offset = timedelta(days=3) 
-    elif (ttl == '1-day'):
-      ttl_offset = timedelta(days=1) 
-    elif (ttl == '12-hours'):
-      ttl_offset = timedelta(hours=12) 
-    elif (ttl == '3-hours'):
-      ttl_offset = timedelta(hours=3) 
-    elif (ttl == '1-hour'):
-      ttl_offset = timedelta(hours=1) 
-    else:
-      self.create_activities()
-      model['errors'] = ['ttl_blank']
-
-    if user_handle == None or len(user_handle) < 1:
-      model['errors'] = ['user_handle_blank']
-
-    if message == None or len(message) < 1:
-      model['errors'] = ['message_blank'] 
-    elif len(message) > 280:
-      model['errors'] = ['message_exceed_max_chars'] 
-
     if model['errors']:
       model['data'] = {
         'handle':  user_handle,
         'message': message
       }   
     else:
+      expires_at = now.isoformat()
+      create_activities(message, expires_at, logger)
+      uuid = get_user_uuid()
       model['data'] = {
-        'uuid': uuid.uuid4(),
-        'display_name': 'Andrew Brown',
+        'uuid': uuid,
+        'display_name': user_handle,
         'handle':  user_handle,
         'message': message,
         'created_at': now.isoformat(),
-        'expires_at': (now + ttl_offset).isoformat()
+        'expires_at': expires_at
       }
     return model
 
-def create_activities():
+def create_activities(message, expires_at, logger):
     user_uuid = get_user_uuid()
-    print(user_uuid)
+    logger.info(message)
+    logger.info(user_uuid)
     sql = f"""
-    INSER INTO activities(
-
+    INSERT INTO activities(
+      user_uuid, message, expires_at
     )
     VALUES(
-    '{user_uuid}',
+    '{user_uuid["uuid"]}',
     '{message}',
-    {expires_at}
-    );
+    '{expires_at}');
     """
-    try:
-      conn = pool.connection()
-      cur = conn.cursor()
-      cur.execute(sql)
-      conn.commit()
-    finally:
-      conn.close()
+    with pool.connection() as conn:
+          with conn.cursor() as cur:
+            cur.execute(sql)
+
+    
 def get_user_uuid():
   query = """
   SELECT
-      users.uuid,
+      users.uuid
     FROM public.users
     """
-  sql = query_wrap_array(query)
+  sql = query_wrap_object(query)
   with pool.connection() as conn:
     with conn.cursor() as cur:
       cur.execute(sql)

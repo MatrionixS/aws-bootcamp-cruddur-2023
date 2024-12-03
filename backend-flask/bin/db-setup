@@ -16,7 +16,10 @@ if [ "$1" = "prod" ]; then
 else
   PARAM=""
 fi
-printf $PARAM
+
+
+echo $PARAM
+echo $CONNECTION_URL
 source "$BIN_PATH/db-drop" $PARAM
 source "$BIN_PATH/db-create" $PARAM
 source "$BIN_PATH/db-schema-load" $PARAM

@@ -2,6 +2,7 @@ from flask import Flask
 from flask import request
 from flask_cors import CORS, cross_origin
 import os
+import logging
 
 from services.home_activities import *
 from services.user_activities import *
@@ -24,6 +25,8 @@ cors = CORS(
   allow_headers="content-type,if-modified-since",
   methods="OPTIONS,GET,HEAD,POST"
 )
+
+logging.basicConfig(level=logging.INFO)
 
 @app.route("/api/message_groups", methods=['GET'])
 def data_message_groups():
@@ -86,11 +89,11 @@ def data_search():
 @app.route("/api/activities", methods=['POST','OPTIONS'])
 @cross_origin()
 def data_activities():
-  print('TEset')
+  app.logger.info("Test")
   user_handle  = 'andrewbrown'
   message = request.json['message']
   ttl = request.json['ttl']
-  model = CreateActivity.run(message, user_handle, ttl)
+  model = CreateActivity.run(message, user_handle, ttl, app.logger)
   if model['errors'] is not None:
     return model['errors'], 422
   else:
